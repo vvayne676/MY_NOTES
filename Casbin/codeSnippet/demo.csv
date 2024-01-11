@@ -1,0 +1,10 @@
+p, admin, data2, read
+p, user, data2, read
+p, owner, /*, GET
+
+p, maintainer,/user/:user_id/cart, GET
+
+g, alice, admin
+g, smith, owner
+g, alice, maintainer
+g, max, maintainer
