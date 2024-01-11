@@ -258,3 +258,150 @@ func main() {
 
 ## 引用？
 只有切片、映射、通道和函数类型属于引用类型。
+
+
+## Goroutine recovery
+```go
+func RecoverPanic(ctx context.Context) {
+	if r := recover(); r != nil {
+		buf := make([]byte, 64<<10)
+		buf = buf[:runtime.Stack(buf, false)]
+		sBuf := string(append([]byte(fmt.Sprintf("%s\n", r)), buf...))
+		logs.CtxError(ctx, sBuf)
+		// emit metrics
+	}
+}
+```
+## goroutine close
+
+main.go
+```go
+func main() {
+	var wg sync.WaitGroup
+	exit := make(chan struct{})
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		RabbitmqPub(exit)
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		RabbigmqConsumer(exit)
+	}()
+
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+
+	<-sig
+	close(exit)
+
+	wg.Wait()
+
+}
+```
+pub.go
+```go
+func RabbitmqPub(exit chan struct{}) {
+
+	// Connect to RabbitMQ
+	conn, err := rabbitmq.NewConn(
+		"amqp://guest:guest@localhost",
+		rabbitmq.WithConnectionOptionsLogging,
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	publisher, err := rabbitmq.NewPublisher(
+		conn,
+		rabbitmq.WithPublisherOptionsLogging,
+		rabbitmq.WithPublisherOptionsExchangeName(EXCHANGE_NAME),
+		rabbitmq.WithPublisherOptionsExchangeKind(EXCHANGE_KIND),
+		rabbitmq.WithPublisherOptionsExchangeArgs(rabbitmq.Table{
+			"x-delayed-type": "topic",
+		}),
+		rabbitmq.WithPublisherOptionsExchangeDeclare,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer publisher.Close()
+
+	publisher.NotifyReturn(func(r rabbitmq.Return) {
+		log.Printf("message returned from server: %s, vv:%v", string(r.Body), r)
+	})
+
+	publisher.NotifyPublish(func(c rabbitmq.Confirmation) {
+		log.Printf("message confirmed from server. tag: %v, ack: %v", c.DeliveryTag, c.Ack)
+	})
+
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("awaiting signal")
+
+	ticker := time.NewTicker(time.Second)
+	for {
+		select {
+		case <-ticker.C:
+			err = publisher.PublishWithContext(
+				context.Background(),
+				[]byte(time.Now().Format("2006-01-02 15:04:05")),
+				[]string{"delay_key"},
+				rabbitmq.WithPublishOptionsContentType("application/json"),
+				//rabbitmq.WithPublishOptionsMandatory,
+				rabbitmq.WithPublishOptionsPersistentDelivery,
+				rabbitmq.WithPublishOptionsExchange(EXCHANGE_NAME),
+				rabbitmq.WithPublishOptionsHeaders(map[string]any{"x-delay": 5000}),
+			)
+
+			if err != nil {
+				log.Println(err)
+			}
+		case <-exit:
+			fmt.Println("stopping publisher")
+			return
+		}
+	}
+}
+```
+consumer.go
+```go
+func RabbigmqConsumer(exit chan struct{}) {
+	conn, err := rabbitmq.NewConn(
+		"amqp://guest:guest@localhost",
+		rabbitmq.WithConnectionOptionsLogging,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	consumer, err := rabbitmq.NewConsumer(
+		conn,
+		func(d rabbitmq.Delivery) rabbitmq.Action {
+			log.Printf("consumed: %v", string(d.Body))
+			// rabbitmq.Ack, rabbitmq.NackDiscard, rabbitmq.NackRequeue
+			return rabbitmq.Ack
+		},
+		"delay_queue",
+		rabbitmq.WithConsumerOptionsConcurrency(1),
+		rabbitmq.WithConsumerOptionsConsumerName("consumer_delay"),
+		rabbitmq.WithConsumerOptionsRoutingKey(ROUTING_KEY),
+		rabbitmq.WithConsumerOptionsExchangeName(EXCHANGE_NAME),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer consumer.Close()
+
+	fmt.Println("awaiting signal")
+
+	fmt.Println("stopping consumer")
+}
+
+```
