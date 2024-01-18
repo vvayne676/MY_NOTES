@@ -1,0 +1,1 @@
+现在你已经学习了所有的机制，你可以将所学的技能应用到更广泛的任务中。即使我们转向分类，大部分的基础工作仍然相同： loading the data, passing it through the model, generating output, calculating the loss, taking gradients with respect to weights, and updating the model。然而，目标的具体形式、输出层的参数化以及损失函数的选择将会根据分类的设置进行调整
