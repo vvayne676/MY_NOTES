@@ -83,3 +83,52 @@ original_error - ref: fastcash
 
 non-pix 
 ref: paypal
+
+```golang
+// out trade no case
+		// merchantIds := req.GetMerchantIds()
+		// results := make(chan *ts_data.Payout, len(merchantIds))
+
+		// var wg sync.WaitGroup
+
+		// for _, merchantStringId := range merchantIds {
+
+		// 	wg.Add(1)
+
+		// 	go func(merchantId string) {
+
+		// 		defer gr.RecoverPanic(ctx)
+		// 		defer wg.Done()
+
+		// 		merchantInt := service.MerchantId2Int(ctx, merchantId)
+
+		// 		r, err = grpc.PayoutListAdb.FindPayoutListByReferenceId(ctx, &ts_data.CustomCode{
+		// 			ReferenceId: req.GetOutTradeNo(),
+		// 			MerchantId:  merchantInt})
+		// 		if err != nil {
+		// 			logs.CtxErrorf(ctx, "[TransactionQuery.PayoutListAdb.FindPayoutListByReferenceId] error: %v", err)
+		// 			r = &ts_data.Payout{}
+		// 		}
+
+		// 		results <- r // Send result to channel
+		// 	}(merchantStringId)
+		// }
+
+		// go func() {
+		// 	wg.Wait()
+		// 	close(results)
+		// }()
+
+		// // Process results from the channel
+		// for result := range results {
+		// 	if result.GetTransactionId() != "" {
+		// 		res.TradeStatus = service.GetTradeStatus(ctx, r.GetTransactionStatus())
+		// 		res.PaymentMethod = service.GetPaymentMethod(ctx, r.GetThirdpartyId())
+		// 		res.RefusedReason = r.GetRemark()
+		// 		res.TradeNo = r.GetTransactionId()
+		// 		return res, nil
+		// 	}
+		// }
+		// res.ErrMsg = fmt.Sprintf("Transaction %v does not exist", req.TradeNo)
+		// return res, nil
+```

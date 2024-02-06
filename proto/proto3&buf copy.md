@@ -58,10 +58,3 @@ message TxStatusQueryRequest {
 }
 ```
 7. buf generate(it will generate all corresponding proto pb files)
-
-
-## proto and swagger
-ref: https://blainsmith.com/articles/go-grpc-gateway-openapi/
-go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
-
-go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
