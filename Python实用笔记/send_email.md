@@ -53,5 +53,6 @@ shoot_email.send_email(
 ```
 Ref: https://mailtrap.io/blog/python-send-email-gmail/ 
 
+pip install urllib3==1.25.11 
 
 password is generated from Google dashboard 2 factors verification part.
