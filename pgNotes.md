@@ -84,7 +84,10 @@ original_error - ref: fastcash
 non-pix 
 ref: paypal
 
+
+### For loop do goroutine htp/grpc call example
 ```golang
+ 
 // out trade no case
 		// merchantIds := req.GetMerchantIds()
 		// results := make(chan *ts_data.Payout, len(merchantIds))
@@ -131,4 +134,140 @@ ref: paypal
 		// }
 		// res.ErrMsg = fmt.Sprintf("Transaction %v does not exist", req.TradeNo)
 		// return res, nil
+```
+
+### buf proto to swagger json
+buf.yaml
+```yml
+version: v1
+build:
+  excludes:
+    - ./vendor
+deps:
+  - buf.build/googleapis/googleapis
+  - buf.build/bufbuild/protovalidate
+  - buf.build/grpc-ecosystem/protoc-gen-swagger
+  - buf.build/grpc-ecosystem/grpc-gateway
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT
+```
+buf.gen.yaml
+```yml
+# 一般放在buf.work.yaml的同级目录下面, 主要定义一些protoc生成的规则和插件配置
+version: v1
+managed:
+  enabled: true
+plugins:
+  # generate go struct code
+  - name: go
+    out: "."
+    # opt: paths=source_relative
+  # generate grpc service code
+  - name: go-grpc
+    out: "."
+    # opt: paths=source_relative
+  - name: validate
+    out: "."
+    opt:
+      # - paths=source_relative
+      - lang=go
+  - plugin: buf.build/grpc-ecosystem/openapiv2
+    out: "swagger-ui"
+    opt:
+      - json_names_for_fields=false # ref: https://github.com/grpc-ecosystem/grpc-gateway/issues/3394 https://github.com/grpc-ecosystem/grpc-gateway/blob/main/protoc-gen-openapiv2/main.go
+
+```
+
+```proto
+syntax = "proto3";
+package aml;
+option go_package = "api/server/aml;aml";
+import "buf/validate/validate.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/api/annotations.proto";
+
+// ************************  AML service ***********************
+
+service Merchant {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_tag) = {
+    name: "AML Service Support"
+    description: "AMLService description -- provide support for AML service!"
+
+  };
+
+  // Get all merchants
+  //
+  // This API get all merchants
+  rpc GetMerchants(GetMerchantsRequest) returns (GetMerchantsReply) {
+    option (google.api.http) = {
+      post: "/api/aml/v1/merchants"
+    };
+  }
+
+  // Get apps under merchant
+  //
+  // This API get apps under the selected merchant
+  rpc GetMerchantApps(GetMerchantAppsRequest) returns (GetMerchantAppsReply) {
+    option (google.api.http) = {
+      post: "/api/aml/v1/merchant/apps"
+    };
+  }
+}
+
+// https://buf.build/bufbuild/protovalidate/docs/main:buf.validate#buf.validate.Int64Rules
+message GetMerchantsRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetMerchantsMessage"
+      description: "GetMerchantsMessage"
+      required: [ "page_num", "page_size", "time" ]
+    }
+  };
+  int64 page_num = 1 [(buf.validate.field).int64.gt = 0];
+  int64 page_size = 2 [
+    (buf.validate.field).int64.lte = 1000,
+    (buf.validate.field).int64.gt = 0,
+
+  ];
+  int64 time = 3 [(buf.validate.field).int64.gt = 0];
+}
+message GetMerchantsReply {
+  message Merchant {
+    string merchant_no = 1;  // 32bit string
+    string merchant_name = 2;
+  }
+  repeated Merchant merchant_list = 1;
+  string err_msg = 99;
+}
+
+message GetMerchantAppsRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "GetMerchantAppsMessage"
+      description: "GetMerchantAppsMessage"
+      required: [ "page_num", "page_size", "merchant_no", "time" ]
+    }
+  };
+  int64 page_num = 1 [(buf.validate.field).int64.gt = 0];
+  int64 page_size = 2 [
+    (buf.validate.field).int64.lte = 1000,
+    (buf.validate.field).int64.gt = 0
+  ];
+  string merchant_no = 3;
+  int64 time = 4 [(buf.validate.field).int64.gt = 0];
+}
+message GetMerchantAppsReply {
+  message App {
+    string app_no = 1;
+    string app_name = 2;
+  }
+  repeated App app_list = 1;
+  string err_msg = 99;
+}
+
+
 ```
