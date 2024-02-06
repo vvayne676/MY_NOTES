@@ -51,4 +51,7 @@ shoot_email.send_email(
         body="empty body",
         attachment_path=f'{ymd}.csv')
 ```
+Ref: https://mailtrap.io/blog/python-send-email-gmail/ 
+
+
 password is generated from Google dashboard 2 factors verification part.
