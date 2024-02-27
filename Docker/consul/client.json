@@ -1,0 +1,9 @@
+{
+    "datacenter": "prod-dc1",
+    "node_name": "consul-client",
+    "data_dir": "/consul/data",
+    "retry_join": [
+        "consul-server3"
+    ],
+    "encrypt": "vEXXtHq9x8iavNgVLY3vGiKqM5buKAlE+95JcWDDQH0="
+}

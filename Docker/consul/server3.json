@@ -1,0 +1,13 @@
+{
+    "datacenter": "prod-dc1",
+    "node_name": "consul-server3",
+    "server": true,
+    "ui_config": {
+        "enabled": true
+    },
+    "data_dir": "/consul/data",
+    "addresses": {
+        "http": "0.0.0.0"
+    },
+    "encrypt": "vEXXtHq9x8iavNgVLY3vGiKqM5buKAlE+95JcWDDQH0="
+}
