@@ -1,14 +1,16 @@
 ## 3.4 Linear Regression Implementation from Scratch
+In this section, we will implement the entire method from scratch, including 
+1. the model; 
+2. the loss function; 
+3. a minibatch stochastic gradient descent optimizer;
+4. the training function that stitches all of these pieces together. 
+5. we will run our synthetic data generator from Section 3.3 and apply our model on the resulting dataset
 ```python
 %matplotlib inline
 import torch
 from d2l import torch as d2l
 ```
-In this section, we will implement the entire method from scratch, including
-1. the model 
-2. the loss function
-3. a minibatch stochastic gradient descent optimizer
-4. the training function that stitches all of these pieces together.
+
 
 ### 3.4.1 Defining the Model
 In the following we initialize weights by drawing random numbers from a normal distribution with mean 0 and a standard deviation of 0.01. The magic number 0.01 often works well in practice, but you can specify a different value through the argument sigma. Moreover we set the bias to 0. 
@@ -32,7 +34,7 @@ class LinearRegressionScratch(d2l.Module):  #@save
         self.w = torch.normal(0, sigma, (num_inputs, 1), requires_grad=True)
         self.b = torch.zeros(1, requires_grad=True)
 ```
-Next we must define our model, relating its input and parameters to its output. Using the same notation as (3.1.4) for our linear model we simply take the matrix–vector product of the input features  and the model weights , and add the offset  to each example. The product  is a vector and  is a scalar. Because of the broadcasting mechanism (see Section 2.1.4), when we add a vector and a scalar, the scalar is added to each component of the vector. The resulting forward method is registered in the LinearRegressionScratch class via add_to_class (introduced in Section 3.2.1).
+Next we must define our model, relating its input and parameters to its output. Using the same notation as (3.1.4) for our linear model we simply take the matrix–vector product of the input features X and the model weights w, and add the offset b to each example. The product Xw is a vector and b is a scalar. Because of the broadcasting mechanism (see Section 2.1.4), when we add a vector and a scalar, the scalar is added to each component of the vector. The resulting forward method is registered in the LinearRegressionScratch class via add_to_class (introduced in Section 3.2.1).
 ```python
 @d2l.add_to_class(LinearRegressionScratch)  #@save
 def forward(self, X):
@@ -76,7 +78,7 @@ class SGD(d2l.HyperParameters):  #@save
     param.grad 表示参数 param 的梯度，self.lr 是学习率。这里的更新方式是简化版的梯度下降，即按照梯度的反方向更新参数值，乘以学习率控制步长
     """
         for param in self.params:
-            param -= self.lr * param.grad
+            param = param - self.lr * param.grad
 
     def zero_grad(self):
     '''
@@ -127,15 +129,16 @@ def fit_epoch(self):
         loss = self.model.training_step(self.prepare_batch(batch))
         # 清空优化器中保存的梯度信息
         self.optim.zero_grad()
-        with torch.no_grad():
-            # 根据损失计算梯度
-            loss.backward()
-            if self.gradient_clip_val > 0:  # To be discussed later
-                # If gradient clipping is enabled, clips gradients to prevent their value from exceeding a threshold.
-                self.clip_gradients(self.gradient_clip_val, self.model)
-            # 根据计算出的梯度更新模型参数
-            self.optim.step()
-        self.train_batch_idx += 1
+        # comment out below because below context manager will disable gradient computation temporarily 
+        # with torch.no_grad():
+        # 根据损失计算梯度
+        loss.backward()
+        if self.gradient_clip_val > 0:  # To be discussed later
+            # If gradient clipping is enabled, clips gradients to prevent their value from exceeding a threshold.
+            self.clip_gradients(self.gradient_clip_val, self.model)
+        # 根据计算出的梯度更新模型参数
+        self.optim.step()
+        self.train_batch_idx = self.train_batch_idx + 1
     if self.val_dataloader is None:
         return
     # Puts the model in evaluation mode.
@@ -145,14 +148,38 @@ def fit_epoch(self):
         # Context manager to disable gradient calculation
         with torch.no_grad():
             self.model.validation_step(self.prepare_batch(batch))
-        self.val_batch_idx += 1
+        self.val_batch_idx = self.val_batch_idx + 1
 ```
-
+1. set model to training mode `self.model.train()`
+2. for loop on minibatch training data to 
+    1. calculate loss
+    2. zero gradient
+    3. loss backward
+    4. step update parameter
+    5. batch idx +1
+3. set model to eval mode
+4. for loop on minibatch validation data 
+    1. validation stage do not need calculate gradient so we have torch.no_grad()
+    2. validation_step
+    3. validation batch idx + 1
 ### 3.4.5
 Start to whole process
 ```python
+# model is model like w1x1 + w2x2 = y, w1 and w2 are the fields belong to model
 model = LinearRegressionScratch(2, lr=0.03)
+# data is the value of x like x1 x2
 data = d2l.SyntheticRegressionData(w=torch.tensor([2, -3.4]), b=4.2)
 trainer = d2l.Trainer(max_epochs=3)
 trainer.fit(model, data)
 ```
+
+
+RuntimeError: a leaf Variable that requires grad is being used in an in-place operation.???
+
+在 PyTorch 中，叶子变量是直接创建的张量，它们不是任何操作的结果，比如通过 torch.tensor 或者 Variable 创建的张量，并且设置了 requires_grad=True。原地操作是指直接修改这个变量而不是创建一个新的变量，比如使用 += 或者 *= 这样的操作。
+
+当你在一个需要梯度的变量上执行原地操作时，PyTorch 无法正确地追踪梯度，因为原地修改意味着变量的值被覆盖了，这会破坏计算图并导致无法回溯。
+
+为了解决这个问题，你需要避免在需要梯度的变量上执行原地操作。如果你需要修改一个变量，你应该创建一个新的变量来存储修改后的值。例如，如果你有一个原地操作 x += y，你应该替换为 x = x + y。
+
+Check forward/backward/SGD make sure you have no in-place operation.
