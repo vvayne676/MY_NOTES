@@ -1,4 +1,12 @@
 ## 3.7 Weight Decay
+Now that we have characterized the problem of overfitting, we can introduce our first regularization technique. Recall that we can always mitigate overfitting by collecting more training data. However, that can be costly, time consuming, or entirely out of our control, making it impossible in the short run. Weight decay，也称为L2正则化，是一种用于防止机器学习模型过拟合的技术。在训练过程中，weight decay通过对模型的权重施加惩罚来限制模型的复杂度，从而促使模型学习到更平滑、更泛化的特征表示。
+```python
+%matplotlib inline
+import torch
+from torch import nn
+from d2l import torch as d2l
+```
+
 
 ### 3.7.1 Norms and Weight Decay
 Rather than directly manipulating the number of parameters, weight decay, operates by restricting the values that the parameters can take. More commonly called $l2$  regularization outside of deep learning circles when optimized by minibatch stochastic gradient descent, weight decay might be the most widely used technique for regularizing parametric machine learning models. 这项技术的动机基于这样一个基本直觉：在所有函数 f 中，函数 f=0（将所有输入值分配为0）在某种意义上是最简单的，我们可以通过其参数与零的距离来衡量函数的复杂性。但是我们应该如何精确地衡量函数与零之间的距离呢？这并没有单一的正确答案。事实上，整个数学领域，包括泛函分析和巴拿赫空间理论的部分，都致力于解决这类问题。
