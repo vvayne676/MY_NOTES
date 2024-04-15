@@ -1,0 +1,278 @@
+syntax = "proto3";
+package robot;
+option go_package = "api/server/robot;robot";
+import "buf/validate/validate.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/api/annotations.proto";
+
+// ************************  Robot service ***********************
+
+service Transaction {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_tag) = {
+    description: "Robot Service support"
+  };
+
+  // Query transaction status
+  //
+  // This API query a transaction status
+  rpc TxStatusQuery(TxStatusQueryRequest) returns (TxStatusQueryReply) {
+    option (google.api.http) = {
+      post: "/api/robot/v1/tx/query"
+    };
+  }
+
+  // Query transactions status
+  //
+  // This API query a transaction status
+  rpc TxsStatusQuery(TxsStatusQueryRequest) returns (TxsStatusQueryReply) {
+    option (google.api.http) = {
+      post: "/api/robot/v1/txs/query"
+    };
+  }
+
+  // Get transaction receipt
+  //
+  // This API get transaction receipt
+  rpc TxReceipt(TxReceiptRequest) returns (TxReceiptReply) {
+    option (google.api.http) = {
+      post: "/api/robot/v1/tx/receipt"
+    };
+  }
+
+  // Recheck transaction status
+  //
+  // This API triggers the channel check function
+  rpc TxRecheck(TxRecheckRequest) returns (TxRecheckReply) {
+    option (google.api.http) = {
+      post: "/api/robot/v1/tx/recheck"
+    };
+  }
+
+  // Trigger transaction callback
+  //
+  // This API triggers the transaction callback
+  rpc TxCallback(TxCallbackRequest) returns (TxCallbackReply) {
+    option (google.api.http) = {
+      post: "/api/robot/v1/tx/callback"
+    };
+  }
+}
+
+service Merchant {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_tag) = {
+    description: "Robot Service support"
+  };
+  // Query merchant balance
+  //
+  // This API query merchant balance
+  rpc MerchantBalanceQuery(MerchantBalanceQueryRequest)
+      returns (MerchantBalanceQueryReply) {
+    option (google.api.http) = {
+      post: "/api/robot/v1/merchant/balance/query"
+    };
+  }
+}
+
+message TxStatusQueryRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "TxStatusMessage"
+      description: "TxStatusMessage"
+      required: [ "merchant_ids" ]
+    }
+  };
+
+  // Id represents the message identifier.
+
+  repeated string merchant_ids = 1 [
+
+    (buf.validate.field).repeated .min_items = 1,
+    (buf.validate.field).repeated .items.string.len = 32,
+    (buf.validate.field).repeated .unique = true
+  ];
+
+  string trade_no = 2
+      [(buf.validate.field).string.pattern =
+           "^(?:.{0}|(?:TS|LT).{25}|(?:TS|LT).{27}|(?:TS|LT).{28})$"];
+  string out_trade_no = 3;
+}
+message TxStatusQueryReply {
+  string trade_status = 1;
+  string payment_method = 2;
+  string refused_reason = 3;
+  string trade_no = 4;
+  string out_trade_no = 5;
+  string currency = 6;
+  string amount = 7;
+  string err_msg = 99;
+}
+
+message TxReceiptRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "TxReceiptMessage"
+      description: "TxReceiptMessage"
+      required: [ "merchant_ids", "trade_no" ]
+    }
+  };
+  repeated string merchant_ids = 1 [
+    (buf.validate.field).repeated .min_items = 1,
+    (buf.validate.field).repeated .items.string.len = 32,
+    (buf.validate.field).repeated .unique = true,
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      title: "merchant_ids"
+    }
+  ];
+  string trade_no = 2;
+}
+
+message TxReceiptReply {
+  message TxInfo {
+    string amount = 1;
+    string currency = 2;
+    string trade_no = 3;
+    string payment_id = 4;
+    string payment_time = 5;
+  }
+
+  message OrderPlacerInfo {
+    string name = 1;
+    string document_type = 2;
+    string document_number = 3;
+  }
+
+  message BeneficiaryInfo {
+    string name = 1;
+    string document_number = 2;
+    string bank_name = 3;
+    string account_type = 4;
+    string account_number = 5;
+  }
+
+  message PaymentInstitution {
+    string name = 1;
+    string cnpj = 2;
+    string account = 3;
+  }
+
+  TxInfo transaction_info = 1;
+  OrderPlacerInfo order_placer_info = 2;
+  BeneficiaryInfo beneficiary_info = 3;
+  PaymentInstitution payment_institution = 4;
+
+  string err_msg = 99;
+}
+
+message TxCallbackRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "TxCallbackMessage"
+      description: "TxCallbackMessage"
+      required: [ "merchant_ids", "trade_no" ]
+    }
+  };
+  repeated string merchant_ids = 1 [
+    (buf.validate.field).repeated .min_items = 1,
+    (buf.validate.field).repeated .items.string.len = 32,
+    (buf.validate.field).repeated .unique = true
+  ];
+  string trade_no = 2;
+  string out_trade_no = 3;
+}
+message TxCallbackReply {
+  bool callback = 1;
+  string err_msg = 99;
+}
+
+message TxRecheckRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "TxRecheckMessage"
+      description: "TxRecheckMessage"
+      required: [ "merchant_ids", "trade_no" ]
+    }
+  };
+  repeated string merchant_ids = 1 [
+    (buf.validate.field).repeated .min_items = 1,
+    (buf.validate.field).repeated .items.string.len = 32,
+    (buf.validate.field).repeated .unique = true
+  ];
+  string trade_no = 2;
+}
+
+message TxRecheckReply {
+  bool recheck = 1;
+  string err_msg = 99;
+}
+
+message MerchantBalanceQueryRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "MerchantBalanceQueryMessage"
+      description: "MerchantBalanceQueryMessage"
+      required: [ "merchant_ids", "time" ]
+    }
+  };
+
+  repeated string merchant_ids = 1 [
+    (buf.validate.field).repeated .min_items = 1,
+    (buf.validate.field).repeated .items.string.len = 32,
+    (buf.validate.field).repeated .unique = true,
+    (buf.validate.field).repeated .max_items = 10
+  ];
+  int64 time = 2 [(buf.validate.field).int64.gt = 0];
+}
+
+message MerchantBalanceQueryReply {
+  message BalanceObj {
+    string currency = 1;
+    string balance = 2;
+  }
+  message MerchantBalance {
+    string merchant_no = 1;
+    repeated BalanceObj balance_list = 2;
+  }
+
+  repeated MerchantBalance merchant_balance = 1;
+  string err_msg = 99;
+}
+
+message TxsStatusQueryRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "TxStatusMessage"
+      description: "TxStatusMessage"
+      required: [ "merchant_ids" ]
+    }
+  };
+
+  // Id represents the message identifier.
+
+  repeated string merchant_ids = 1 [
+
+    (buf.validate.field).repeated .min_items = 1,
+    (buf.validate.field).repeated .items.string.len = 32,
+    (buf.validate.field).repeated .unique = true
+  ];
+
+  repeated string trade_no = 2 [
+    (buf.validate.field).repeated .min_items = 1,
+    (buf.validate.field).repeated .max_items = 10,
+    (buf.validate.field).repeated .unique = true,
+    (buf.validate.field).repeated .items.string.pattern =
+        "^(?:.{0}|(?:TS|LT).{25}|(?:TS|LT).{27}|(?:TS|LT).{28})$"
+  ];
+}
+message TxsStatusQueryReply {
+  message TxStatus {
+    string trade_status = 1;
+    string payment_method = 2;
+    string refused_reason = 3;
+    string trade_no = 4;
+    string out_trade_no = 5;
+    string currency = 6;
+    string amount = 7;
+  }
+  repeated TxStatus transactions = 1;
+  string err_msg = 99;
+}

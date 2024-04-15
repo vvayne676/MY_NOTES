@@ -405,3 +405,69 @@ func RabbigmqConsumer(exit chan struct{}) {
 }
 
 ```
+
+## local cache imp
+```go
+package local_cache
+
+import (
+	"sync"
+	"time"
+)
+
+type CacheItem struct {
+	value      interface{}
+	expiration time.Time
+}
+
+type LocalCache struct {
+	cache map[string]CacheItem
+	mutex sync.RWMutex
+}
+
+func NewLocalCache() *LocalCache {
+	return &LocalCache{
+		cache: make(map[string]CacheItem),
+	}
+}
+
+func (lc *LocalCache) Get(key string) (interface{}, bool) {
+	lc.mutex.RLock()
+
+	item, ok := lc.cache[key]
+	if !ok {
+		lc.mutex.RUnlock()
+		return nil, false
+	}
+
+	// Check if the item has expired
+	if time.Now().After(item.expiration) {
+		// Remove the expired item from the cache
+		lc.mutex.RUnlock()
+		lc.mutex.Lock()
+		defer lc.mutex.Unlock()
+		delete(lc.cache, key)
+		return nil, false
+	}
+	lc.mutex.RUnlock()
+	return item.value, true
+}
+
+func (lc *LocalCache) Set(key string, value interface{}, expiration time.Duration) {
+	lc.mutex.Lock()
+	defer lc.mutex.Unlock()
+
+	lc.cache[key] = CacheItem{
+		value:      value,
+		expiration: time.Now().Add(expiration),
+	}
+}
+
+func (lc *LocalCache) Cleanup() {
+	lc.mutex.Lock()
+	defer lc.mutex.Unlock()
+
+	lc.cache = make(map[string]CacheItem)
+}
+
+``` 
