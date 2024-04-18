@@ -143,3 +143,12 @@ func test(ctx context.Context) {
 
 从并发 -> goroutine -> 到锁 -> 到MQ -> 到单核 -> 到多核 -> 到MESI和transaction-bus
 
+golang 引用类型 - 引用类型的变量实际上是对底层数据的引用或指针，而不是数据本身的直接存储
+1. pointer
+2. slice
+3. map
+4. channel
+5. func
+5. interface
+
+虽然上述类型在 Go 中被视为引用类型，但它们的传递行为并不完全等同于 C 或 C++ 中的指针传递。Go 语言的传递机制更接近于 "copy-on-write"，这意味着在大多数情况下，对引用类型的操作不会导致原始数据的修改，除非你明确地对引用类型进行修改操作. 但是你对引用类型当中的值进行操作原数据也会改变 因为复制和原数据都指向相同的底层数据
