@@ -1,0 +1,103 @@
+services:
+  etcd1:
+    image: docker.io/bitnami/etcd:latest
+    container_name: etcd1
+    restart: always
+    ports:
+      - 2379:2379
+    volumes:
+      - ./certs/:/srv
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCDCTL_API=3
+      - ETCD_DEBUG=1
+      - ETCD_NAME=etcd1
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd1:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd1:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+      - ETCD_CERT_FILE=/srv/etcd1.pem
+      - ETCD_KEY_FILE=/srv/etcd1-key.pem
+      - ETCD_PEER_CERT_FILE=/srv/peer-etcd1.pem
+      - ETCD_PEER_KEY_FILE=/srv/peer-etcd1-key.pem
+      - ETCD_PEER_CLIENT_CERT_AUTH=true
+    # networks:
+    #   - shenyu
+    
+    # NOTICE!!: ETCD_KEY_FILE=/srv/etcd1-key.pem IS CORRECT
+    #           ETCD_KEY_FILE= /srv/etcd1-key.pem IS NOT CORRECT, SPACE IS NOT PERMITTED
+
+  etcd2:
+    image: docker.io/bitnami/etcd:latest
+    container_name: etcd2
+    restart: always
+    ports:
+      - 2380:2379
+    volumes:
+      - ./certs/:/srv
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCDCTL_API=3
+      - ETCD_DEBUG=1
+      - ETCD_NAME=etcd2
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd2:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd2:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+      - ETCD_CERT_FILE=/srv/etcd2.pem
+      - ETCD_KEY_FILE=/srv/etcd2-key.pem
+      - ETCD_PEER_CERT_FILE=/srv/peer-etcd2.pem
+      - ETCD_PEER_KEY_FILE=/srv/peer-etcd2-key.pem
+      - ETCD_PEER_CLIENT_CERT_AUTH=true
+    # networks:
+    #   - shenyu
+    
+
+  etcd3:
+    image: docker.io/bitnami/etcd:latest
+    container_name: etcd3
+    restart: always
+    ports:
+      - 2381:2379
+    volumes:
+      - ./certs/:/srv
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCDCTL_API=3
+      - ETCD_DEBUG=1
+      - ETCD_NAME=etcd3
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd3:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd3:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+      - ETCD_PEER_TRUSTED_CA_FILE=/srv/ca.pem
+      - ETCD_CERT_FILE=/srv/etcd3.pem
+      - ETCD_KEY_FILE=/srv/etcd3-key.pem
+      - ETCD_PEER_CERT_FILE=/srv/peer-etcd3.pem
+      - ETCD_PEER_KEY_FILE=/srv/peer-etcd3-key.pem
+      - ETCD_PEER_CLIENT_CERT_AUTH=true
+    # networks:
+    #   - shenyu
+    
+
+networks:
+  shenyu:
+    name: shenyu
+
+
+
+
+
+
+
+# https://gist.github.com/hexfusion/b67f587e140b6cbb0ccb13348f57674a
+# https://github.com/apache/shenyu-client-golang/blob/main/docker-compose-etcd.yml

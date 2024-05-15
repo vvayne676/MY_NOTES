@@ -7,3 +7,7 @@
 7. https://aws.amazon.com/blogs
 8. https://slack.engineering
 9. https://stripe.com/blog
+
+whiteboard: https://excalidraw.com
+
+web3 hash演示 http://anders.com/blockchain/
