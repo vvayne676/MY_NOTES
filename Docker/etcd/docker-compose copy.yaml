@@ -1,6 +1,6 @@
 services:
   etcd1:
-    image: docker.io/bitnami/etcd:3.5.13
+    image: docker.io/bitnami/etcd:latest
     container_name: etcd1
     restart: always
     ports:
@@ -23,20 +23,16 @@ services:
       - ETCD_TRUSTED_CA_FILE=/srv/ca.crt
       - ETCD_CERT_FILE=/srv/etcd1.crt
       - ETCD_KEY_FILE=/srv/etcd1.key
-      - ETCD_PEER_CERT_FILE=/srv/etcd1.crt
-      - ETCD_PEER_KEY_FILE=/srv/etcd1.key
+      - ETCD_PEER_CERT_FILE=/srv/peer-etcd1.crt
+      - ETCD_PEER_KEY_FILE=/srv/peer-etcd1.key
       - ETCD_PEER_CLIENT_CERT_AUTH=true
-      - ETCDCTL_DIAL_TIMEOUT=3s
-      - ETCDCTL_CACERT=/srv/ca.crt
-      - ETCDCTL_CERT=/srv/client.crt
-      - ETCDCTL_KEY=/srv/client.key
    
     
     # NOTICE!!: ETCD_KEY_FILE=/srv/etcd1-key.pem IS CORRECT
     #           ETCD_KEY_FILE= /srv/etcd1-key.pem IS NOT CORRECT, SPACE IS NOT PERMITTED
 
   etcd2:
-    image: docker.io/bitnami/etcd:3.5.13
+    image: docker.io/bitnami/etcd:latest
     container_name: etcd2
     restart: always
     ports:
@@ -59,17 +55,13 @@ services:
       - ETCD_TRUSTED_CA_FILE=/srv/ca.crt
       - ETCD_CERT_FILE=/srv/etcd2.crt
       - ETCD_KEY_FILE=/srv/etcd2.key
-      - ETCD_PEER_CERT_FILE=/srv/etcd2.crt
-      - ETCD_PEER_KEY_FILE=/srv/etcd2.key
+      - ETCD_PEER_CERT_FILE=/srv/peer-etcd2.crt
+      - ETCD_PEER_KEY_FILE=/srv/peer-etcd2.key
       - ETCD_PEER_CLIENT_CERT_AUTH=true
-      - ETCDCTL_DIAL_TIMEOUT=3s
-      - ETCDCTL_CACERT=/srv/ca.crt
-      - ETCDCTL_CERT=/srv/client.crt
-      - ETCDCTL_KEY=/srv/client.key
 
 
   etcd3:
-    image: docker.io/bitnami/etcd:3.5.13
+    image: docker.io/bitnami/etcd:latest
     container_name: etcd3
     restart: always
     ports:
@@ -92,13 +84,9 @@ services:
       - ETCD_TRUSTED_CA_FILE=/srv/ca.crt
       - ETCD_CERT_FILE=/srv/etcd3.crt
       - ETCD_KEY_FILE=/srv/etcd3.key
-      - ETCD_PEER_CERT_FILE=/srv/etcd3.crt
-      - ETCD_PEER_KEY_FILE=/srv/etcd3.key
+      - ETCD_PEER_CERT_FILE=/srv/peer-etcd3.crt
+      - ETCD_PEER_KEY_FILE=/srv/peer-etcd3.key
       - ETCD_PEER_CLIENT_CERT_AUTH=true
-      - ETCDCTL_DIAL_TIMEOUT=3s
-      - ETCDCTL_CACERT=/srv/ca.crt
-      - ETCDCTL_CERT=/srv/client.crt
-      - ETCDCTL_KEY=/srv/client.key
 
     
 

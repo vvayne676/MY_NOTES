@@ -59,6 +59,7 @@ openssl x509 -req -in peer-etcd1.csr -CA ca.pem -CAkey ca-key.pem -CAcreateseria
 
 除了 etcd,任何基于 SSL/TLS 的安全通信都需要类似的证书验证机制。比如访问 HTTPS 网站时,浏览器也需要内置或导入可信的根证书,才能验证网站服务器证书。
 
+### 6. 客户端也需要用根证书生成自己的证书和etcd服务端交互
 
 
 ```go

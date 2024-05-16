@@ -1,0 +1,23 @@
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+prompt             = no
+default_md = sha256
+
+[ req_distinguished_name ]
+C  = US
+ST = YourState
+L  = YourCity
+O  = YourOrg
+OU = YourUnit
+CN = etcd3
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = etcd3
+DNS.2 = etcd3.local
+IP.1  = 192.168.1.103
+IP.2  = 127.0.0.1

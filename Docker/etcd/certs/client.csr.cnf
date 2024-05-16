@@ -1,0 +1,20 @@
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+prompt             = no
+default_md = sha256
+
+[ req_distinguished_name ]
+C  = US
+ST = YourState
+L  = YourCity
+O  = YourOrg
+OU = YourUnit
+CN = etcd-client
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = etcd-client

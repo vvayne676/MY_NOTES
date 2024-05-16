@@ -1,0 +1,45 @@
+services:
+  etcd1:
+    image: docker.io/bitnami/etcd:3.5.13
+    container_name: etcd1
+    restart: always
+    ports:
+      - 2379:2379
+    volumes:
+      - ./certs/:/srv
+      - ./etcd1.conf.yaml:/opt/bitnami/etcd/conf/etcd.conf.yaml
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_CONFIG_FILE=/opt/bitnami/etcd/conf/etcd.conf.yaml
+      
+  etcd2:
+    image: docker.io/bitnami/etcd:3.5.13
+    container_name: etcd2
+    restart: always
+    ports:
+      - 2381:2379
+    volumes:
+      - ./certs/:/srv
+      - ./etcd2.conf.yaml:/opt/bitnami/etcd/conf/etcd.conf.yaml
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_CONFIG_FILE=/opt/bitnami/etcd/conf/etcd.conf.yaml
+     
+  etcd3:
+    image: docker.io/bitnami/etcd:3.5.13
+    container_name: etcd3
+    restart: always
+    ports:
+      - 2382:2379
+    volumes:
+      - ./certs/:/srv
+      - ./etcd3.conf.yaml:/opt/bitnami/etcd/conf/etcd.conf.yaml
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_CONFIG_FILE=/opt/bitnami/etcd/conf/etcd.conf.yaml
+     
+    
+
+
+
+
