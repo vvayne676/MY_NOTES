@@ -27,10 +27,10 @@ default_md = sha256
 
 [ req_distinguished_name ]
 C  = US
-ST = YourState
-L  = YourCity
-O  = YourOrg
-OU = YourUnit
+ST = NY
+L  = NYC
+O  = Xiao
+OU = Xiao
 CN = $NODE
 
 [ req_ext ]
@@ -82,10 +82,10 @@ default_md = sha256
 
 [ req_distinguished_name ]
 C  = US
-ST = YourState
-L  = YourCity
-O  = YourOrg
-OU = YourUnit
+ST = NY
+L  = NYC
+O  = Xiao
+OU = Xiao
 CN = etcd-client
 
 [ req_ext ]
@@ -115,10 +115,10 @@ openssl x509 -req -in ./client.csr -CA ./ca.crt -CAkey ./ca.key -CAcreateserial 
 
 echo "Certificate generation completed."
 
-curl -vL --cacert ca.crt --cert client.crt --key client.key https://etcd1:2379/v3/kv/put -XPOST -d '{"key":"d2k=","value":"aGVsbG8="}'
+# curl -vL --cacert ca.crt --cert client.crt --key client.key https://etcd1:2379/v3/kv/put -XPOST -d '{"key":"d2k=","value":"aGVsbG8="}'
 
 
-curl -vL --cacert ca.crt --cert client.crt --key client.key https://etcd2:2379/v3/kv/range -XPOST -d '{"key":"d2k="}'
+# curl -vL --cacert ca.crt --cert client.crt --key client.key https://etcd2:2379/v3/kv/range -XPOST -d '{"key":"d2k="}'
 
 
 

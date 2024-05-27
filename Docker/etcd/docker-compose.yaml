@@ -9,7 +9,6 @@ services:
       - ./certs/:/srv
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCDCTL_API=3
       - ETCD_DEBUG=3
       - ETCD_NAME=etcd1
       - ETCD_INITIAL_ADVERTISE_PEER_URLS=https://etcd1:2380
@@ -19,17 +18,17 @@ services:
       - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
       - ETCD_INITIAL_CLUSTER=etcd1=https://etcd1:2380,etcd2=https://etcd2:2380,etcd3=https://etcd3:2380
       - ETCD_INITIAL_CLUSTER_STATE=new
-      - ETCD_PEER_TRUSTED_CA_FILE=/srv/ca.crt
-      - ETCD_TRUSTED_CA_FILE=/srv/ca.crt
-      - ETCD_CERT_FILE=/srv/etcd1.crt
-      - ETCD_KEY_FILE=/srv/etcd1.key
-      - ETCD_PEER_CERT_FILE=/srv/etcd1.crt
-      - ETCD_PEER_KEY_FILE=/srv/etcd1.key
+      - ETCD_PEER_TRUSTED_CA_FILE=/srv/ca/ca.crt
+      - ETCD_TRUSTED_CA_FILE=/srv/ca/ca.crt
+      - ETCD_CERT_FILE=/srv/etcd1/etcd1.crt
+      - ETCD_KEY_FILE=/srv/etcd1/etcd1.key
+      - ETCD_PEER_CERT_FILE=/srv/etcd1/etcd1.crt
+      - ETCD_PEER_KEY_FILE=/srv/etcd1/etcd1.key
       - ETCD_PEER_CLIENT_CERT_AUTH=true
       - ETCDCTL_DIAL_TIMEOUT=3s
-      - ETCDCTL_CACERT=/srv/ca.crt
-      - ETCDCTL_CERT=/srv/client.crt
-      - ETCDCTL_KEY=/srv/client.key
+      - ETCDCTL_CACERT=/srv/ca/ca.crt
+      - ETCDCTL_CERT=/srv/client/client.crt
+      - ETCDCTL_KEY=/srv/client/client.key
    
     
     # NOTICE!!: ETCD_KEY_FILE=/srv/etcd1-key.pem IS CORRECT
@@ -45,7 +44,6 @@ services:
       - ./certs/:/srv
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCDCTL_API=3
       - ETCD_DEBUG=1
       - ETCD_NAME=etcd2
       - ETCD_INITIAL_ADVERTISE_PEER_URLS=https://etcd2:2380
@@ -55,17 +53,17 @@ services:
       - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
       - ETCD_INITIAL_CLUSTER=etcd1=https://etcd1:2380,etcd2=https://etcd2:2380,etcd3=https://etcd3:2380
       - ETCD_INITIAL_CLUSTER_STATE=new
-      - ETCD_PEER_TRUSTED_CA_FILE=/srv/ca.crt
-      - ETCD_TRUSTED_CA_FILE=/srv/ca.crt
-      - ETCD_CERT_FILE=/srv/etcd2.crt
-      - ETCD_KEY_FILE=/srv/etcd2.key
-      - ETCD_PEER_CERT_FILE=/srv/etcd2.crt
-      - ETCD_PEER_KEY_FILE=/srv/etcd2.key
+      - ETCD_PEER_TRUSTED_CA_FILE=/srv/ca/ca.crt
+      - ETCD_TRUSTED_CA_FILE=/srv/ca/ca.crt
+      - ETCD_CERT_FILE=/srv/etcd2/etcd2.crt
+      - ETCD_KEY_FILE=/srv/etcd2/etcd2.key
+      - ETCD_PEER_CERT_FILE=/srv/etcd2/etcd2.crt
+      - ETCD_PEER_KEY_FILE=/srv/etcd2/etcd2.key
       - ETCD_PEER_CLIENT_CERT_AUTH=true
       - ETCDCTL_DIAL_TIMEOUT=3s
-      - ETCDCTL_CACERT=/srv/ca.crt
-      - ETCDCTL_CERT=/srv/client.crt
-      - ETCDCTL_KEY=/srv/client.key
+      - ETCDCTL_CACERT=/srv/ca/ca.crt
+      - ETCDCTL_CERT=/srv/client/client.crt
+      - ETCDCTL_KEY=/srv/client/client.key
 
 
   etcd3:
@@ -78,7 +76,6 @@ services:
       - ./certs/:/srv
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCDCTL_API=3
       - ETCD_DEBUG=1
       - ETCD_NAME=etcd3
       - ETCD_INITIAL_ADVERTISE_PEER_URLS=https://etcd3:2380
@@ -88,26 +85,25 @@ services:
       - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
       - ETCD_INITIAL_CLUSTER=etcd1=https://etcd1:2380,etcd2=https://etcd2:2380,etcd3=https://etcd3:2380
       - ETCD_INITIAL_CLUSTER_STATE=new
-      - ETCD_PEER_TRUSTED_CA_FILE=/srv/ca.crt
-      - ETCD_TRUSTED_CA_FILE=/srv/ca.crt
-      - ETCD_CERT_FILE=/srv/etcd3.crt
-      - ETCD_KEY_FILE=/srv/etcd3.key
-      - ETCD_PEER_CERT_FILE=/srv/etcd3.crt
-      - ETCD_PEER_KEY_FILE=/srv/etcd3.key
+      - ETCD_PEER_TRUSTED_CA_FILE=/srv/ca/ca.crt
+      - ETCD_TRUSTED_CA_FILE=/srv/ca/ca.crt
+      - ETCD_CERT_FILE=/srv/etcd3/etcd3.crt
+      - ETCD_KEY_FILE=/srv/etcd3/etcd3.key
+      - ETCD_PEER_CERT_FILE=/srv/etcd3/etcd3.crt
+      - ETCD_PEER_KEY_FILE=/srv/etcd3/etcd3.key
       - ETCD_PEER_CLIENT_CERT_AUTH=true
       - ETCDCTL_DIAL_TIMEOUT=3s
-      - ETCDCTL_CACERT=/srv/ca.crt
-      - ETCDCTL_CERT=/srv/client.crt
-      - ETCDCTL_KEY=/srv/client.key
+      - ETCDCTL_CACERT=/srv/ca/ca.crt
+      - ETCDCTL_CERT=/srv/client/client.crt
+      - ETCDCTL_KEY=/srv/client/client.key
 
     
+# curl -vL --cacert ca.crt --cert client.crt --key client.key https://etcd2:2379/v3/kv/range -XPOST -d '{"key":"d2k="}'
+# curl -vL --cacert ca.crt --cert client.crt --key client.key https://etcd1:2379/v3/kv/put -XPOST -d '{"key":"d2k=","value":"aGVsbG8="}'
 
-
-
-
-
-
-
-
-# https://gist.github.com/hexfusion/b67f587e140b6cbb0ccb13348f57674a
-# https://github.com/apache/shenyu-client-golang/blob/main/docker-compose-etcd.yml
+# check server ca 
+# openssl s_client -connect etcd2:port -servername etcd2
+#
+# openssl x509  -noout -text -in ./etcd2.crt  
+#
+# openssl req  -noout -text -in ./etcd2.csr
