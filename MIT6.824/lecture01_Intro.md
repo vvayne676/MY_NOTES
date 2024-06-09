@@ -1,10 +1,10 @@
  Distributed system is not simpler, then why ppl are driven to use them?
 1. parallelism - because ppl want to achieve, high performance, parallelism, lots of CPUs, lots of memories, lots of disk arms moving in parallel
 2. fault tolerance 
-3. physical - bank a computer in NY bank b computer in London
+3. physical - internal bank transfer, bank a computer in NY bank b computer in London
 4. security/isolated
 
-Course will focus on 1&2.
+Course will focus on above problem 1 and 2.
 
 Challenges:
 1. concurrency
