@@ -1,4 +1,4 @@
-It is not simpler why ppl are driven to use them?\
+ Distributed system is not simpler, then why ppl are driven to use them?
 1. parallelism - because ppl want to achieve, high performance, parallelism, lots of CPUs, lots of memories, lots of disk arms moving in parallel
 2. fault tolerance 
 3. physical - bank a computer in NY bank b computer in London
