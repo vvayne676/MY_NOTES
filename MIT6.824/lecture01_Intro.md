@@ -1,4 +1,4 @@
- Distributed system is not simpler, then why ppl are driven to use them?
+Distributed system is not simpler, then why ppl are driven to use them?
 1. parallelism - because ppl want to achieve, high performance, parallelism, lots of CPUs, lots of memories, lots of disk arms moving in parallel
 2. fault tolerance 
 3. physical - internal bank transfer, bank a computer in NY bank b computer in London
@@ -22,14 +22,14 @@ Implementation: how to build system up
 2. threads
 3. concurrency control - locks
 
-Performance: 
+Performance(the idea behind distributed system is scale speed up): 
 * scalability - 2 x computers -> 2 x throughput
     * Big e-commerce website, when you add more computers, bottle neck move to DB
 
-Fault Tolerance:
+Fault Tolerance(thousand computers/big scale turn very rare failure problem into failure problems that happen just all the time):
 1. availability
 2. recoverability
-    * non-volatile storage(expensive)
+    * non-volatile storage(slow)
     * replication
 
 Consistency
