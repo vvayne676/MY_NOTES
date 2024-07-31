@@ -6,6 +6,7 @@ class Solution:
             else:
                 nums[abs(v)-1]*=(-1)
         return -1
+    
     def findDuplicateT(self, nums: List[int]) -> int:
         x=set()
         for v in nums:

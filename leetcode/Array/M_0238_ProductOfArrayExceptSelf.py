@@ -1,25 +1,17 @@
 class Solution:
     def productExceptSelf(self, nums: List[int]) -> List[int]:
-        productNoZero=1
-        zeros=0
-        res=[]
-        for v in nums:
-            if v==0:
-                product=0
-                zeros+=1
-            else:
-                productNoZero*=v
         
-        for v in nums:
-            if v==0:
-                if zeros>1:
-                    res.append(0)
-                else:
-                    res.append(productNoZero)
-            else:
-                if zeros==0:
-                    # Notice: productNoZero/v is a float
-                    res.append(productNoZero/v)
-                else:
-                    res.append(0)
-        return res
+        n=len(nums)
+        ileft=[1]*n
+        iright=[1]*n
+        ans=[1]*n
+
+        for i in range(1,n):
+            ileft[i] = ileft[i-1]*nums[i-1]
+        
+        for j in range(n-2,-1,-1):
+            iright[j] = iright[j+1]*nums[j+1]
+        
+        for k in range(n):
+            ans[k]=ileft[k]*iright[k]
+        return ans

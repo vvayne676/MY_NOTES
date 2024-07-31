@@ -1,5 +1,5 @@
 '''
-中序遍历BST 数组是升序的
+中序遍历BST 得到数组 然后 取 k 
 '''
 
 class BST:
@@ -10,12 +10,12 @@ class BST:
 
 
 def findKthLargestValueInBst(tree, k):
-    traveral = []
+    traversal = []
     def inorderTraverse(tree):
         if tree is None:
             return
         inorderTraverse(tree.left)
-        traveral.append(tree.value)
+        traversal.append(tree.value)
         inorderTraverse(tree.right)
     inorderTraverse(tree)
-    return traveral[-k] if len(traveral)>=k else -1
+    return traversal[-k] if len(traversal)>=k else -1

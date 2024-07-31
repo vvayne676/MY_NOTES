@@ -13,7 +13,7 @@ class Solution:
     def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
         slow=fast=head
         counter=0
-        while counter<0:
+        while counter<n:
             fast=fast.next
             counter+=1
         if fast is None:

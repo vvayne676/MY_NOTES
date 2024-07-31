@@ -9,10 +9,11 @@ class Solution:
         return maxx
 
     def maxSubArrayT(self, nums: List[int]) -> int:
-        d=[0]*len(nums)
-        d[0]=nums[0]
+        # 以 i 为结尾的子数组的最大和
+        dp=[0]*len(nums)
+        dp[0]=nums[0]
         maxx=nums[0]
         for i in range(1,len(nums)):
-            d[i]=d[i-1]+nums[i] if d[i-1]>0 else nums[i]
-            maxx=max(maxx,d[i])
+            dp[i]=dp[i-1]+nums[i] if dp[i-1]>0 else nums[i]
+            maxx=max(maxx,dp[i])
         return maxx

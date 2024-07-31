@@ -10,18 +10,20 @@ class Solution:
         if not list2:
             return list1
         
-        head=l=ListNode()
+        head=cur=ListNode()
         while list1 and list2:
-            if list1.val<=list2.val:
-                l.next=ListNode(list1.val)
-                l=l.next
+            if list1.val<list2.val:
+                temp=list1
+                cur.next=temp
                 list1=list1.next
+                cur=cur.next
             else:
-                l.next=ListNode(list2.val)
-                l=l.next
+                temp = list2
+                cur.next=temp
                 list2=list2.next
+                cur=cur.next
         if list1:
-            l.next=list1
+            cur.next=list1
         if list2:
-            l.next=list2
+            cur.next=list2
         return head.next
