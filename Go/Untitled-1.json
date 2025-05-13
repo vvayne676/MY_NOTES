@@ -1,0 +1,21 @@
+{
+    "bank_url": "https://apis-pix.bancomicrocash.com/",
+    "id": "8004",
+    "name": "fastcash-mliasset",
+    "kv": {
+        "key": "3kl87m03ubbff1ku7cs3dk2k67",
+        "secret": "ij62gti0atpdhmnvjetbr5tjlm9ac83ql50dj39rnhh9nfq57ek",
+        "account": "a2b60d33-8311-455d-91f9-17399b2943b0"
+    }
+}
+    
+{
+    "bank_url": "https://apis-pix.bancomicrocash.com/",
+    "id": "8004",
+    "name": "fastcash-mliasset",
+    "kv": {
+        "key": "3kl87m03ubbff1ku7cs3dk2k67",
+        "secret": "ij62gti0atpdhmnvjetbr5tjlm9ac83ql50dj39rnhh9nfq57ek",
+        "account": "000090836"
+    }
+}
